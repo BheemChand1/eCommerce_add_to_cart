@@ -96,6 +96,10 @@
     <!--main/custom js-->
     <script src="{{asset('assets/js/main.js')}}"></script>
 
+
+    {{ $scripts ?? '' }}
+
+
 </body>
 
 </html>

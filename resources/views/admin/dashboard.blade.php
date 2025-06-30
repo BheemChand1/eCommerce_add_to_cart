@@ -9,32 +9,39 @@
                 <div class="card-body">
                     <table class="table">
                         <thead>
+
                             <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">First</th>
-                                <th scope="col">Last</th>
-                                <th scope="col">Handle</th>
+                                <th scope="col">sr no.</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Image</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">
+                                    Action
+                                </th>
                             </tr>
+
+
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">2</th>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">3</th>
-                                <td>John</td>
-                                <td>Doe</td>
-                                <td>@social</td>
-                            </tr>
+                            @foreach ($products as $product)
+                                <tr>
+                                    <td>{{$product->id}}</td>
+                                    <td>{{$product->name}}</td>
+                                    <td>
+                                        {{-- <img src="{{ asset('uploads/' . $product->image) }}"
+                                            style="height: 100px; width: 100px;" alt="Product Image"> --}}
+                                    </td>
+                                    <td>{{$product->price}}</td>
+                                    <td>{{$product->qty}}</td>
+                                    <td>{{$product->created_at}}</td>
+                                    <td class="d-flex">
+                                        <a href="{{route('product.edit', $product->id)}}" class="btn btn-primary">Edit</a>
+                                        &emsp13;
+                                        <a href="" class="btn btn-danger">Delete</a>
+                                    </td>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

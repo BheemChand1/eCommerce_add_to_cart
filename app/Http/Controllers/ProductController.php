@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductStoreRequest;
+use App\Http\Requests\ProductUpdateRequest;
 use App\Models\Product;
 use App\Models\ProductColor;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+
 
 class ProductController extends Controller
 {
@@ -96,19 +99,77 @@ class ProductController extends Controller
         return view('admin.product.edit',compact('product','color'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
+
+public function update(ProductUpdateRequest $request, string $id)
+{
+    $product = Product::findOrFail($id);
+
+    // Update basic fields
+    $product->update([
+        'name' => $request->name,
+        'price' => $request->price,
+        'short_description' => $request->short_description,
+        'qty' => $request->qty,
+        'sku' => $request->sku,
+        'description' => $request->description,
+    ]);
+
+    // Update single image
+    if ($request->hasFile('image')) {
+        // Delete old image if exists
+        if ($product->image && File::exists(public_path('uploads/' . $product->image))) {
+            File::delete(public_path('uploads/' . $product->image));
+        }
+
+        $image = $request->file('image');
+        $filename = $image->store('uploads', 'public');
+        $product->image = $filename;
+        $product->save();
     }
+
+    // Add new multiple images
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $image) {
+            $filename = $image->store('uploads', 'public');
+            ProductImage::create([
+                'product_id' => $product->id,
+                'path' => $filename,
+            ]);
+        }
+    }
+
+    // Update colors: first delete existing then insert new
+    if ($request->filled('productColors')) {
+        // Delete old colors
+        ProductColor::where('product_id', $product->id)->delete();
+
+        // Add new colors
+        foreach ($request->productColors as $color) {
+            ProductColor::create([
+                'product_id' => $product->id,
+                'name' => $color,
+            ]);
+        }
+    }
+
+    return redirect()->back()->with('success', 'Product updated successfully.');
+}
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
-    {
-        //
+{
+    $product = Product::findOrFail($id);
+
+    // Optional: Delete image file if stored locally
+    if ($product->image && File::exists(public_path('uploads/' . $product->image))) {
+        File::delete(public_path('uploads/' . $product->image));
     }
+
+    $product->delete(); // Deletes the product from the database
+
+    return redirect()->back()->with('success', 'Product deleted successfully!');
+}
 }

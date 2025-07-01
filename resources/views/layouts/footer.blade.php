@@ -4,7 +4,7 @@
             <div class="col-12">
                 <div class="footer_text">
                     <a class="footer_logo" href="index.html">
-                        <img src="images/logo.png" alt="Freeit" class="img-fluid">
+                        <img src="{{asset('assets/images/logo.png')}}" alt="Freeit" class="img-fluid">
                     </a>
                     <ul class="d-flex flex-wrap">
                         <li><a href="#"><i class="fab fa-twitter" aria-hidden="true"></i></a></li>
